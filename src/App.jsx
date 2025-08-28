@@ -7,6 +7,7 @@ import "./App.css";
 export default function App() {
   const [cards, setCards] = useState([]);
   const [input, setInput] = useState("");
+  const [editingId, setEditingId] = useState(null);
 
   function handleInput(event) {
     setInput(event.target.value);
@@ -14,9 +15,31 @@ export default function App() {
 
   function createCard() {
     setCards([{ id: Date.now(), title: input }, ...cards]);
+    setInput("")
   }
 
-  function renameCard(idRename) {}
+  function renameCard(idRename) {
+    let card = cards.find((card) => card.id === idRename);
+    if (!card) {
+      return;
+    }
+    setInput(card.title);
+    setEditingId(idRename);
+  }
+
+  function saveCard() {
+    if (editingId === null) {
+      return;
+    }
+
+    setCards((cards) =>
+      cards.map((card) =>
+        card.id === editingId ? { ...card, title: input } : card
+      )
+    );
+    setInput("");
+    setEditingId(null);
+  }
 
   function deleteCard(idRemove) {
     setCards((cards) => cards.filter((card) => card.id !== idRemove));
@@ -25,7 +48,7 @@ export default function App() {
   return (
     <div className="wrapper">
       <Header />
-      <Input onClick={createCard} value={input} onChange={handleInput} />
+      <Input onClick={editingId === null ? createCard : saveCard} value={input} onChange={handleInput} />
 
       <ul className="card-form">
         {cards.map((card) => {
@@ -34,6 +57,7 @@ export default function App() {
               key={card.id}
               title={card.title}
               onDelete={() => deleteCard(card.id)}
+              onRename ={() => renameCard(card.id)}
             />
           );
         })}
