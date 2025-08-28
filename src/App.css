@@ -102,9 +102,6 @@
 }
 
 .card-text {
-  position: absolute;
-  top: 6px;
-  left: 20px;
   color: #111111;
   font-size: 24px;
 }
